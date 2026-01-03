@@ -62,7 +62,7 @@ import { AppController } from './app.controller';
         password: configService.get('database.password'),
         database: configService.get('database.name'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get('app.nodeEnv') === 'development',
+        synchronize: true, // Cria tabelas automaticamente
         logging: configService.get('app.nodeEnv') === 'development',
       }),
     }),
