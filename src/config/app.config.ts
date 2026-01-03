@@ -2,15 +2,15 @@ import { registerAs } from '@nestjs/config';
 
 export const appConfig = registerAs('app', () => ({
   nodeEnv: process.env.NODE_ENV || 'development',
-  port: parseInt(process.env.PORT, 10) || 3000,
+  port: parseInt(process.env.PORT || '3000', 10),
   
   // Clínica
   clinic: {
     name: process.env.CLINIC_NAME || 'Consultório de Psicologia',
     phone: process.env.CLINIC_PHONE,
     psychologistName: process.env.PSYCHOLOGIST_NAME,
-    consultationValue: parseFloat(process.env.CONSULTATION_VALUE) || 200.00,
-    consultationDuration: parseInt(process.env.CONSULTATION_DURATION_MINUTES, 10) || 50,
+    consultationValue: parseFloat(process.env.CONSULTATION_VALUE || '200'),
+    consultationDuration: parseInt(process.env.CONSULTATION_DURATION_MINUTES || '50', 10),
   },
 
   // Horários

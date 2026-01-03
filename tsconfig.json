@@ -25,5 +25,15 @@
       "@database/*": ["src/database/*"],
       "@integrations/*": ["src/integrations/*"]
     }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "public",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ],
+  "watchOptions": {
+    "excludeDirectories": ["node_modules", "dist", "public"]
   }
 }

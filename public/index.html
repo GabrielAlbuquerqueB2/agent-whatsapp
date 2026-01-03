@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PSI Agenda - Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <i class="fas fa-brain"></i>
+        <span>PSI Agenda</span>
+      </div>
+    </div>
+    
+    <ul class="nav-menu">
+      <li class="nav-item active" data-page="dashboard">
+        <i class="fas fa-chart-pie"></i>
+        <span>Dashboard</span>
+      </li>
+      <li class="nav-item" data-page="agenda">
+        <i class="fas fa-calendar-alt"></i>
+        <span>Agenda do Dia</span>
+      </li>
+      <li class="nav-item" data-page="pacientes">
+        <i class="fas fa-users"></i>
+        <span>Pacientes</span>
+      </li>
+      <li class="nav-item" data-page="consultas">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Consultas</span>
+      </li>
+      <li class="nav-item" data-page="handoff">
+        <i class="fas fa-headset"></i>
+        <span>Handoff</span>
+        <span class="badge" id="handoff-badge">0</span>
+      </li>
+      <li class="nav-item" data-page="financeiro">
+        <i class="fas fa-dollar-sign"></i>
+        <span>Financeiro</span>
+      </li>
+      <li class="nav-item" data-page="relatorios">
+        <i class="fas fa-chart-bar"></i>
+        <span>Relatórios</span>
+      </li>
+    </ul>
+    
+    <div class="sidebar-footer">
+      <a href="/docs" target="_blank" class="api-link">
+        <i class="fas fa-code"></i>
+        <span>API Docs</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <button class="menu-toggle" id="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h1 class="page-title" id="page-title">Dashboard</h1>
+      </div>
+      <div class="header-right">
+        <div class="date-display">
+          <i class="fas fa-calendar"></i>
+          <span id="current-date"></span>
+        </div>
+        <button class="btn btn-primary" id="btn-refresh">
+          <i class="fas fa-sync-alt"></i>
+          Atualizar
+        </button>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <div class="content" id="content">
+      <!-- Dashboard Page -->
+      <div class="page active" id="page-dashboard">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-consultas-hoje">0</span>
+              <span class="stat-label">Consultas Hoje</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-realizadas">0</span>
+              <span class="stat-label">Realizadas (Mês)</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon orange">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-pendentes">0</span>
+              <span class="stat-label">Pagamentos Pendentes</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon purple">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-pacientes">0</span>
+              <span class="stat-label">Total Pacientes</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+          <!-- Próximas Consultas -->
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-clock"></i> Próximas Consultas</h3>
+            </div>
+            <div class="card-body">
+              <div class="consultas-list" id="proximas-consultas">
+                <div class="loading">Carregando...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Handoffs Aguardando -->
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-headset"></i> Handoffs Aguardando</h3>
+            </div>
+            <div class="card-body">
+              <div class="handoff-list" id="handoffs-aguardando">
+                <div class="loading">Carregando...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagamentos Pendentes -->
+          <div class="card full-width">
+            <div class="card-header">
+              <h3><i class="fas fa-dollar-sign"></i> Pagamentos Pendentes</h3>
+            </div>
+            <div class="card-body">
+              <div class="table-container">
+                <table class="data-table" id="pagamentos-pendentes-table">
+                  <thead>
+                    <tr>
+                      <th>Paciente</th>
+                      <th>Consulta</th>
+                      <th>Valor</th>
+                      <th>Vencimento</th>
+                      <th>Status</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td colspan="6" class="loading">Carregando...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agenda Page -->
+      <div class="page" id="page-agenda">
+        <div class="card full-width">
+          <div class="card-header">
+            <h3><i class="fas fa-calendar-day"></i> Agenda de Hoje</h3>
+            <div class="card-actions">
+              <input type="date" id="agenda-date" class="form-control">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="agenda-timeline" id="agenda-timeline">
+              <div class="loading">Carregando...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pacientes Page -->
+      <div class="page" id="page-pacientes">
+        <div class="card full-width">
+          <div class="card-header">
+            <h3><i class="fas fa-users"></i> Pacientes</h3>
+            <div class="card-actions">
+              <input type="text" id="search-pacientes" class="form-control" placeholder="Buscar paciente...">
+              <button class="btn btn-primary" id="btn-novo-paciente">
+                <i class="fas fa-plus"></i> Novo Paciente
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table class="data-table" id="pacientes-table">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>Email</th>
+                    <th>Valor Consulta</th>
+                    <th>Tipo Cobrança</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="7" class="loading">Carregando...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Consultas Page -->
+      <div class="page" id="page-consultas">
+        <div class="card full-width">
+          <div class="card-header">
+            <h3><i class="fas fa-clipboard-list"></i> Todas as Consultas</h3>
+            <div class="card-actions">
+              <select id="filter-status-consulta" class="form-control">
+                <option value="">Todos os Status</option>
+                <option value="agendada">Agendada</option>
+                <option value="confirmada">Confirmada</option>
+                <option value="realizada">Realizada</option>
+                <option value="cancelada">Cancelada</option>
+                <option value="nao_compareceu">Não Compareceu</option>
+              </select>
+              <button class="btn btn-primary" id="btn-nova-consulta">
+                <i class="fas fa-plus"></i> Nova Consulta
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table class="data-table" id="consultas-table">
+                <thead>
+                  <tr>
+                    <th>Data/Hora</th>
+                    <th>Paciente</th>
+                    <th>Status</th>
+                    <th>Pagamento</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="6" class="loading">Carregando...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Handoff Page -->
+      <div class="page" id="page-handoff">
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-hourglass-half"></i> Aguardando Atendimento</h3>
+            </div>
+            <div class="card-body">
+              <div class="handoff-full-list" id="handoff-aguardando-list">
+                <div class="loading">Carregando...</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fas fa-comments"></i> Em Atendimento</h3>
+            </div>
+            <div class="card-body">
+              <div class="handoff-full-list" id="handoff-atendimento-list">
+                <div class="loading">Carregando...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financeiro Page -->
+      <div class="page" id="page-financeiro">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <i class="fas fa-arrow-up"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-recebido">R$ 0</span>
+              <span class="stat-label">Recebido (Mês)</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon orange">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-a-receber">R$ 0</span>
+              <span class="stat-label">A Receber</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon red">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-vencido">R$ 0</span>
+              <span class="stat-label">Vencido</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card full-width">
+          <div class="card-header">
+            <h3><i class="fas fa-list"></i> Movimentação Financeira</h3>
+            <div class="card-actions">
+              <input type="month" id="filter-mes" class="form-control">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table class="data-table" id="financeiro-table">
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Paciente</th>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                    <th>Método</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="6" class="loading">Carregando...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Relatórios Page -->
+      <div class="page" id="page-relatorios">
+        <div class="reports-grid">
+          <div class="report-card" data-report="consultas">
+            <div class="report-icon blue">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <h4>Relatório de Consultas</h4>
+            <p>Visualize todas as consultas por período</p>
+          </div>
+          
+          <div class="report-card" data-report="financeiro">
+            <div class="report-icon green">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <h4>Relatório Financeiro</h4>
+            <p>Análise de receitas e pagamentos</p>
+          </div>
+          
+          <div class="report-card" data-report="pacientes">
+            <div class="report-icon purple">
+              <i class="fas fa-users"></i>
+            </div>
+            <h4>Relatório de Pacientes</h4>
+            <p>Estatísticas de pacientes ativos</p>
+          </div>
+          
+          <div class="report-card" data-report="auditoria">
+            <div class="report-icon orange">
+              <i class="fas fa-history"></i>
+            </div>
+            <h4>Auditoria</h4>
+            <p>Log de todas as ações do sistema</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Modal</h3>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Dynamic content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -33,8 +33,10 @@ async function bootstrap() {
     }),
   );
 
-  // Prefixo global da API
-  app.setGlobalPrefix('api/v1');
+  // Prefixo global da API (exceto rotas raiz)
+  app.setGlobalPrefix('api/v1', {
+    exclude: ['/', 'health', 'docs'],
+  });
 
   // Swagger/OpenAPI
   const config = new DocumentBuilder()

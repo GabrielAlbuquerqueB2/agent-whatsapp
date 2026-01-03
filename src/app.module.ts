@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 // Configurações
 import { databaseConfig } from './config/database.config';
@@ -28,6 +30,9 @@ import { WhatsappApiModule } from './integrations/whatsapp-api/whatsapp-api.modu
 // Comum
 import { LoggerModule } from './common/logger/logger.module';
 
+// Controller principal
+import { AppController } from './app.controller';
+
 @Module({
   imports: [
     // Configurações globais
@@ -35,6 +40,12 @@ import { LoggerModule } from './common/logger/logger.module';
       isGlobal: true,
       load: [appConfig, databaseConfig],
       envFilePath: ['.env', '.env.local'],
+    }),
+
+    // Servir arquivos estáticos (Dashboard)
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/dashboard',
     }),
 
     // Banco de dados
@@ -78,5 +89,6 @@ import { LoggerModule } from './common/logger/logger.module';
     AsaasWebhookModule,
     RelatoriosModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

@@ -136,10 +136,10 @@ export class CobrancaService {
       }
 
       // Salva pagamento no banco
-      const novoPagamento = this.pagamentoRepository.create({
+      const novoPagamento: Pagamento = this.pagamentoRepository.create({
         consulta_id: consulta.id,
         asaas_payment_id: asaasPayment.id,
-        valor: consulta.valor,
+        valor: Number(consulta.valor),
         metodo_pagamento: paciente.tipo_pagamento as unknown as MetodoPagamento,
         status: StatusPagamentoAsaas.PENDING,
         link_pagamento: asaasPayment.invoiceUrl,
@@ -147,8 +147,8 @@ export class CobrancaService {
         pix_copia_cola: pixCopiaECola,
         qr_code_url: qrCodeUrl,
         data_vencimento: dataVencimento,
-      });
-      const pagamento = await this.pagamentoRepository.save(novoPagamento);
+      } as Partial<Pagamento>);
+      const pagamento: Pagamento = await this.pagamentoRepository.save(novoPagamento);
 
       // Atualiza status da consulta
       await this.consultasService.atualizarStatusPagamento(
