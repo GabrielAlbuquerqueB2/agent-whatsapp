@@ -21,6 +21,8 @@ import { LembretesModule } from './modules/lembretes/lembretes.module';
 import { CobrancaModule } from './modules/cobranca/cobranca.module';
 import { AsaasWebhookModule } from './modules/asaas-webhook/asaas-webhook.module';
 import { RelatoriosModule } from './modules/relatorios/relatorios.module';
+import { DisponibilidadeModule } from './modules/disponibilidade/disponibilidade.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 // Integrações
 import { GoogleCalendarModule } from './integrations/google-calendar/google-calendar.module';
@@ -88,6 +90,8 @@ import { AppController } from './app.controller';
     CobrancaModule,
     AsaasWebhookModule,
     RelatoriosModule,
+    DisponibilidadeModule,
+    AuthModule,
   ],
   controllers: [AppController],
 })

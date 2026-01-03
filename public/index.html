@@ -44,6 +44,10 @@
         <i class="fas fa-dollar-sign"></i>
         <span>Financeiro</span>
       </li>
+      <li class="nav-item" data-page="disponibilidade">
+        <i class="fas fa-clock"></i>
+        <span>Disponibilidade</span>
+      </li>
       <li class="nav-item" data-page="relatorios">
         <i class="fas fa-chart-bar"></i>
         <span>Relatórios</span>
@@ -405,6 +409,99 @@
             </div>
             <h4>Auditoria</h4>
             <p>Log de todas as ações do sistema</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Disponibilidade Page -->
+      <div class="page" id="page-disponibilidade">
+        <div class="card full-width">
+          <div class="card-header">
+            <h3><i class="fas fa-clock"></i> Configurar Disponibilidade</h3>
+            <button class="btn btn-primary" id="btn-add-disponibilidade">
+              <i class="fas fa-plus"></i> Adicionar Horário
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="disponibilidade-resumo" id="disponibilidade-resumo">
+              <div class="resumo-item">
+                <span class="resumo-label">Dias ativos:</span>
+                <span class="resumo-value" id="resumo-dias">-</span>
+              </div>
+              <div class="resumo-item">
+                <span class="resumo-label">Horas/semana:</span>
+                <span class="resumo-value" id="resumo-horas">-</span>
+              </div>
+              <div class="resumo-item">
+                <span class="resumo-label">Slots disponíveis:</span>
+                <span class="resumo-value" id="resumo-slots">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="disponibilidade-grid">
+          <!-- Domingo -->
+          <div class="dia-card" data-dia="0">
+            <div class="dia-header">
+              <h4><i class="fas fa-calendar-day"></i> Domingo</h4>
+              <span class="dia-status inativo">Não atende</span>
+            </div>
+            <div class="dia-horarios"></div>
+          </div>
+
+          <!-- Segunda -->
+          <div class="dia-card" data-dia="1">
+            <div class="dia-header">
+              <h4><i class="fas fa-calendar-day"></i> Segunda-feira</h4>
+              <span class="dia-status inativo">Não atende</span>
+            </div>
+            <div class="dia-horarios"></div>
+          </div>
+
+          <!-- Terça -->
+          <div class="dia-card" data-dia="2">
+            <div class="dia-header">
+              <h4><i class="fas fa-calendar-day"></i> Terça-feira</h4>
+              <span class="dia-status inativo">Não atende</span>
+            </div>
+            <div class="dia-horarios"></div>
+          </div>
+
+          <!-- Quarta -->
+          <div class="dia-card" data-dia="3">
+            <div class="dia-header">
+              <h4><i class="fas fa-calendar-day"></i> Quarta-feira</h4>
+              <span class="dia-status inativo">Não atende</span>
+            </div>
+            <div class="dia-horarios"></div>
+          </div>
+
+          <!-- Quinta -->
+          <div class="dia-card" data-dia="4">
+            <div class="dia-header">
+              <h4><i class="fas fa-calendar-day"></i> Quinta-feira</h4>
+              <span class="dia-status inativo">Não atende</span>
+            </div>
+            <div class="dia-horarios"></div>
+          </div>
+
+          <!-- Sexta -->
+          <div class="dia-card" data-dia="5">
+            <div class="dia-header">
+              <h4><i class="fas fa-calendar-day"></i> Sexta-feira</h4>
+              <span class="dia-status inativo">Não atende</span>
+            </div>
+            <div class="dia-horarios"></div>
+          </div>
+
+          <!-- Sábado -->
+          <div class="dia-card" data-dia="6">
+            <div class="dia-header">
+              <h4><i class="fas fa-calendar-day"></i> Sábado</h4>
+              <span class="dia-status inativo">Não atende</span>
+            </div>
+            <div class="dia-horarios"></div>
           </div>
         </div>
       </div>

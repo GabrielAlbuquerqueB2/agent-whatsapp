@@ -134,6 +134,9 @@ class PsiAgendaApp {
       case 'financeiro':
         this.loadFinanceiro();
         break;
+      case 'disponibilidade':
+        this.loadDisponibilidade();
+        break;
     }
   }
 
@@ -590,6 +593,188 @@ class PsiAgendaApp {
 
     } catch (error) {
       console.error('Erro ao carregar financeiro:', error);
+    }
+  }
+
+  // ============================================
+  // Disponibilidade
+  // ============================================
+
+  async loadDisponibilidade() {
+    try {
+      // Carregar resumo
+      const resumo = await api.getDisponibilidadeResumo().catch(() => ({
+        diasAtivos: [],
+        totalHorasSemana: 0,
+        slotsDisponiveis: 0,
+      }));
+
+      const diasNomes = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      const diasAtivosNomes = resumo.diasAtivos.map(d => diasNomes[d]).join(', ') || 'Nenhum';
+      
+      document.getElementById('resumo-dias').textContent = diasAtivosNomes;
+      document.getElementById('resumo-horas').textContent = `${resumo.totalHorasSemana}h`;
+      document.getElementById('resumo-slots').textContent = resumo.slotsDisponiveis;
+
+      // Carregar disponibilidades
+      const disponibilidades = await api.getDisponibilidades().catch(() => []);
+
+      // Agrupar por dia
+      const porDia = {};
+      for (let i = 0; i <= 6; i++) {
+        porDia[i] = [];
+      }
+      
+      disponibilidades.forEach(d => {
+        porDia[d.diaSemana].push(d);
+      });
+
+      // Renderizar cada dia
+      document.querySelectorAll('.dia-card').forEach(card => {
+        const dia = parseInt(card.dataset.dia);
+        const horarios = porDia[dia] || [];
+        const statusEl = card.querySelector('.dia-status');
+        const horariosEl = card.querySelector('.dia-horarios');
+
+        if (horarios.length > 0) {
+          card.classList.add('ativo');
+          statusEl.textContent = `${horarios.length} período(s)`;
+          statusEl.classList.remove('inativo');
+          statusEl.classList.add('ativo');
+        } else {
+          card.classList.remove('ativo');
+          statusEl.textContent = 'Não atende';
+          statusEl.classList.remove('ativo');
+          statusEl.classList.add('inativo');
+        }
+
+        horariosEl.innerHTML = horarios.map(h => `
+          <div class="horario-item">
+            <div class="horario-info">
+              <span class="horario-range">${h.horarioInicio} - ${h.horarioFim}</span>
+              <span class="horario-config">${h.duracaoConsulta}min consulta | ${h.intervaloConsultas}min intervalo</span>
+            </div>
+            <div class="horario-actions">
+              <button class="btn-toggle ${h.ativo ? '' : 'inactive'}" onclick="app.toggleDisponibilidade('${h.id}')" title="${h.ativo ? 'Desativar' : 'Ativar'}">
+                <i class="fas fa-${h.ativo ? 'toggle-on' : 'toggle-off'}"></i>
+              </button>
+              <button class="btn-delete" onclick="app.removerDisponibilidade('${h.id}')" title="Remover">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `).join('');
+      });
+
+      // Botão adicionar
+      document.getElementById('btn-add-disponibilidade')?.addEventListener('click', () => {
+        this.showAddDisponibilidadeModal();
+      });
+
+    } catch (error) {
+      console.error('Erro ao carregar disponibilidade:', error);
+      this.showToast('Erro ao carregar disponibilidade', 'error');
+    }
+  }
+
+  showAddDisponibilidadeModal() {
+    const diasSemana = [
+      { value: 0, label: 'Domingo' },
+      { value: 1, label: 'Segunda-feira' },
+      { value: 2, label: 'Terça-feira' },
+      { value: 3, label: 'Quarta-feira' },
+      { value: 4, label: 'Quinta-feira' },
+      { value: 5, label: 'Sexta-feira' },
+      { value: 6, label: 'Sábado' },
+    ];
+
+    const content = `
+      <form class="form-disponibilidade" id="form-disponibilidade">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="diaSemana">Dia da Semana</label>
+            <select id="diaSemana" name="diaSemana" required>
+              ${diasSemana.map(d => `<option value="${d.value}">${d.label}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="horarioInicio">Horário Início</label>
+            <input type="time" id="horarioInicio" name="horarioInicio" value="08:00" required>
+          </div>
+          <div class="form-group">
+            <label for="horarioFim">Horário Fim</label>
+            <input type="time" id="horarioFim" name="horarioFim" value="18:00" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="duracaoConsulta">Duração Consulta (min)</label>
+            <input type="number" id="duracaoConsulta" name="duracaoConsulta" value="50" min="15" max="180" required>
+          </div>
+          <div class="form-group">
+            <label for="intervaloConsultas">Intervalo (min)</label>
+            <input type="number" id="intervaloConsultas" name="intervaloConsultas" value="10" min="0" max="60" required>
+          </div>
+        </div>
+
+        <div class="form-actions" style="display: flex; gap: 12px; margin-top: 20px;">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    `;
+
+    this.showModal('Adicionar Horário de Disponibilidade', content);
+
+    document.getElementById('form-disponibilidade').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await this.salvarDisponibilidade();
+    });
+  }
+
+  async salvarDisponibilidade() {
+    const form = document.getElementById('form-disponibilidade');
+    const data = {
+      diaSemana: parseInt(form.diaSemana.value),
+      horarioInicio: form.horarioInicio.value,
+      horarioFim: form.horarioFim.value,
+      duracaoConsulta: parseInt(form.duracaoConsulta.value),
+      intervaloConsultas: parseInt(form.intervaloConsultas.value),
+    };
+
+    try {
+      await api.criarDisponibilidade(data);
+      this.closeModal();
+      this.showToast('Disponibilidade adicionada com sucesso!', 'success');
+      this.loadDisponibilidade();
+    } catch (error) {
+      this.showToast(error.message || 'Erro ao salvar disponibilidade', 'error');
+    }
+  }
+
+  async toggleDisponibilidade(id) {
+    try {
+      await api.toggleDisponibilidade(id);
+      this.showToast('Status alterado!', 'success');
+      this.loadDisponibilidade();
+    } catch (error) {
+      this.showToast('Erro ao alterar status', 'error');
+    }
+  }
+
+  async removerDisponibilidade(id) {
+    if (!confirm('Deseja realmente remover este horário?')) return;
+
+    try {
+      await api.removerDisponibilidade(id);
+      this.showToast('Horário removido!', 'success');
+      this.loadDisponibilidade();
+    } catch (error) {
+      this.showToast('Erro ao remover horário', 'error');
     }
   }
 

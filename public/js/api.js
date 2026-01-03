@@ -215,6 +215,56 @@ const api = {
       method: 'POST',
     });
   },
+
+  // ============================================
+  // Disponibilidade
+  // ============================================
+  
+  async getDisponibilidades() {
+    return this.request('/disponibilidade');
+  },
+
+  async getDisponibilidadesAtivas() {
+    return this.request('/disponibilidade/ativas');
+  },
+
+  async getDisponibilidadeResumo() {
+    return this.request('/disponibilidade/resumo');
+  },
+
+  async getDisponibilidadePorDia(diaSemana) {
+    return this.request(`/disponibilidade/dia/${diaSemana}`);
+  },
+
+  async getHorariosDisponiveis(data) {
+    return this.request(`/disponibilidade/horarios/${data}`);
+  },
+
+  async criarDisponibilidade(data) {
+    return this.request('/disponibilidade', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async atualizarDisponibilidade(id, data) {
+    return this.request(`/disponibilidade/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async toggleDisponibilidade(id) {
+    return this.request(`/disponibilidade/${id}/toggle`, {
+      method: 'PUT',
+    });
+  },
+
+  async removerDisponibilidade(id) {
+    return this.request(`/disponibilidade/${id}`, {
+      method: 'DELETE',
+    });
+  },
 };
 
 // Export for use

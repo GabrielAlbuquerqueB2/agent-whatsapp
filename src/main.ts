@@ -35,7 +35,7 @@ async function bootstrap() {
 
   // Prefixo global da API (exceto rotas raiz)
   app.setGlobalPrefix('api/v1', {
-    exclude: ['/', 'health', 'docs'],
+    exclude: ['/', 'health', 'docs', 'auth/google', 'auth/google/callback'],
   });
 
   // Swagger/OpenAPI
